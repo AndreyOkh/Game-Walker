@@ -9,8 +9,8 @@
 
 using Welcome;
 ConsoleKeyInfo pressedKey;
-int positionCoursorX = 2;
-int positionCoursorY = 2;
+int positionCoursorLeft = 0;
+int positionCoursorTop = 0;
 
 HelloUser.Hello();
 Console.WriteLine("Добро пожаловать в игру бродилку, что бы пройти лабиринт передвигайте @ стрелками. Что бы выйти нажмите ESC.");
@@ -20,46 +20,37 @@ Console.ReadKey();
 
 Console.Clear();
 Console.CursorVisible = false;
-Console.SetCursorPosition(positionCoursorX, positionCoursorY);
+Console.SetCursorPosition(positionCoursorLeft, positionCoursorTop);
 Console.Write("@");
-
-
 
 do
 {
     pressedKey = Console.ReadKey();
-    if(pressedKey.Key == ConsoleKey.UpArrow)
-    {
-        Console.SetCursorPosition(positionCoursorX, positionCoursorY);
-        Console.Write(" ");
-        --positionCoursorY;
-        Console.SetCursorPosition(positionCoursorX, positionCoursorY);
-        Console.Write("@");
-    }
-    if(pressedKey.Key == ConsoleKey.DownArrow)
-    {
-        Console.SetCursorPosition(positionCoursorX, positionCoursorY);
-        Console.Write(" ");
-        ++positionCoursorY;
-        Console.SetCursorPosition(positionCoursorX, positionCoursorY);
-        Console.Write("@");
-    }
-    if(pressedKey.Key == ConsoleKey.LeftArrow)
-    {
-        Console.SetCursorPosition(positionCoursorX, positionCoursorY);
-        Console.Write(" ");
-        --positionCoursorX;
-        Console.SetCursorPosition(positionCoursorX, positionCoursorY);
-        Console.Write("@");
-    }
-    if(pressedKey.Key == ConsoleKey.RightArrow)
-    {
-        Console.SetCursorPosition(positionCoursorX, positionCoursorY);
-        Console.Write(" ");
-        ++positionCoursorX;
-        Console.SetCursorPosition(positionCoursorX, positionCoursorY);
-        Console.Write("@");
-    }
-    
+    if (pressedKey.Key == ConsoleKey.UpArrow || 
+        pressedKey.Key == ConsoleKey.DownArrow) 
+        positionCoursorTop = Movement(positionCoursorLeft, positionCoursorTop, pressedKey.Key);
+
+    if (pressedKey.Key == ConsoleKey.LeftArrow ||
+        pressedKey.Key == ConsoleKey.RightArrow)
+        positionCoursorLeft = Movement(positionCoursorLeft, positionCoursorTop, pressedKey.Key);
+
 } while (pressedKey.Key != ConsoleKey.Escape);
 
+int Movement(int positionCoursorLeft, int positionCoursorTop, ConsoleKey pressedKey)
+{
+    int newPositionCoursorLeft = positionCoursorLeft;
+    int newPositionCoursorTop = positionCoursorTop;
+
+    if(pressedKey == ConsoleKey.UpArrow) --newPositionCoursorTop;
+    if(pressedKey == ConsoleKey.DownArrow) ++newPositionCoursorTop;
+    if(pressedKey == ConsoleKey.LeftArrow) --newPositionCoursorLeft;
+    if(pressedKey == ConsoleKey.RightArrow) ++newPositionCoursorLeft;
+
+    Console.SetCursorPosition(positionCoursorLeft, positionCoursorTop);
+    Console.Write(' ');
+    Console.SetCursorPosition(newPositionCoursorLeft, newPositionCoursorTop);
+    Console.Write('@');
+
+    if (positionCoursorLeft != newPositionCoursorLeft) return newPositionCoursorLeft;
+    else return newPositionCoursorTop;
+}
