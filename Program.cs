@@ -39,6 +39,8 @@ do
 
 } while (pressedKey.Key != ConsoleKey.Escape);
 
+Console.CursorVisible = true;
+
 // Метод перемещения игрока в поле
 int Movement(int positionCoursorLeft, int positionCoursorTop, char[,] arena, ConsoleKey pressedKey)
 {
