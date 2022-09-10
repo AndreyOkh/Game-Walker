@@ -8,35 +8,39 @@
 // Область можно задать через двумерный массив. Персонаж должен иметь свободу движения в пределах его области.
 
 using Welcome;
-ConsoleKeyInfo pressedKey;
-int positionCoursorLeft = 0;
-int positionCoursorTop = 0;
+using Level1;
 
 HelloUser.Hello();
-Console.WriteLine("Добро пожаловать в игру бродилку, что бы пройти лабиринт передвигайте @ стрелками. Что бы выйти нажмите ESC.");
-Console.WriteLine("Нажмите любую клавишу что бы продолжить что бы продолжить");
-
 Console.ReadKey();
 
+// Рисуем поле
 Console.Clear();
+char[,] arena = GameLevelOne.Arena();
+
+// Создаем игрока
+ConsoleKeyInfo pressedKey;
+int positionCoursorLeft = 1;
+int positionCoursorTop = 1;
 Console.CursorVisible = false;
 Console.SetCursorPosition(positionCoursorLeft, positionCoursorTop);
-Console.Write("@");
+Console.Write('@');
+
 
 do
 {
     pressedKey = Console.ReadKey();
     if (pressedKey.Key == ConsoleKey.UpArrow || 
         pressedKey.Key == ConsoleKey.DownArrow) 
-        positionCoursorTop = Movement(positionCoursorLeft, positionCoursorTop, pressedKey.Key);
+        positionCoursorTop = Movement(positionCoursorLeft, positionCoursorTop, arena, pressedKey.Key);
 
     if (pressedKey.Key == ConsoleKey.LeftArrow ||
         pressedKey.Key == ConsoleKey.RightArrow)
-        positionCoursorLeft = Movement(positionCoursorLeft, positionCoursorTop, pressedKey.Key);
+        positionCoursorLeft = Movement(positionCoursorLeft, positionCoursorTop, arena, pressedKey.Key);
 
 } while (pressedKey.Key != ConsoleKey.Escape);
 
-int Movement(int positionCoursorLeft, int positionCoursorTop, ConsoleKey pressedKey)
+// Метод перемещения игрока в поле
+int Movement(int positionCoursorLeft, int positionCoursorTop, char[,] arena, ConsoleKey pressedKey)
 {
     int newPositionCoursorLeft = positionCoursorLeft;
     int newPositionCoursorTop = positionCoursorTop;
@@ -46,11 +50,19 @@ int Movement(int positionCoursorLeft, int positionCoursorTop, ConsoleKey pressed
     if(pressedKey == ConsoleKey.LeftArrow) --newPositionCoursorLeft;
     if(pressedKey == ConsoleKey.RightArrow) ++newPositionCoursorLeft;
 
-    Console.SetCursorPosition(positionCoursorLeft, positionCoursorTop);
-    Console.Write(' ');
-    Console.SetCursorPosition(newPositionCoursorLeft, newPositionCoursorTop);
-    Console.Write('@');
-
-    if (positionCoursorLeft != newPositionCoursorLeft) return newPositionCoursorLeft;
-    else return newPositionCoursorTop;
+    bool checkStep = arena[newPositionCoursorTop, newPositionCoursorLeft] == ' ';
+    if(checkStep)
+    {
+        Console.SetCursorPosition(positionCoursorLeft, positionCoursorTop);
+        Console.Write(' ');
+        Console.SetCursorPosition(newPositionCoursorLeft, newPositionCoursorTop);
+        Console.Write('@');
+        if (positionCoursorLeft != newPositionCoursorLeft) return newPositionCoursorLeft;
+        else return newPositionCoursorTop;
+    }
+    else
+    {
+        if (positionCoursorLeft != newPositionCoursorLeft) return positionCoursorLeft;
+        else return positionCoursorTop;
+    }
 }

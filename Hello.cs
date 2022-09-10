@@ -19,5 +19,7 @@ public static class HelloUser
             Thread.Sleep(2);
         }
         Console.WriteLine();
+        Console.WriteLine("Добро пожаловать в игру бродилку, что бы пройти лабиринт передвигайте @ стрелками. Что бы выйти нажмите ESC.");
+        Console.WriteLine("Нажмите любую клавишу что бы продолжить");
     }
 }
