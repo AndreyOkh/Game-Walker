@@ -19,24 +19,23 @@
 // Сохранения
 
 /*
-1. Вывод списка уровней, список уровней находится в папке Levels в формате .txt
-2. Реализовать выбор уровня
+1. Вывод списка уровней, список уровней находится в папке Levels в формате .txt     // ГОТОВО
+2. Реализовать выбор уровня     // ГОТОВО
 3. Генерация предметов
 4. Генерация и реализация движения врагов
 5. Реализовать игровой счет
 6. Реализовать сохранение
 7. Реализовать игровые жизни
-
+8. Поздравление с победой или провалом
 */
 using Welcome;
-using Level1;
 
-HelloUser.Hello();
-Console.ReadKey(true);
+// HelloUser.Hello();
+// Console.ReadKey(true);
 
 // Рисуем поле
 Console.Clear();
-char[,] arena = GameLevelOne.Arena();
+char[,] arena = Arena();
 
 // Создаем игрока
 ConsoleKeyInfo pressedKey;
@@ -64,6 +63,7 @@ do
 
 } while (pressedKey.Key != ConsoleKey.Escape);
 
+Console.Clear();
 Console.CursorVisible = true;
 
 // Метод перемещения игрока в поле
@@ -110,4 +110,51 @@ int Movement(int positionCoursorLeft, int positionCoursorTop, char[,] arena, Con
         else
             return positionCoursorTop;
     }
+}
+
+// Метод выбора и вывода уровня
+char[,] Arena()
+{
+    // Вывожу список уровней
+    Console.WriteLine("Введите номер уровня");
+    string[] dirs = Directory.GetFiles("Levels/", "*.txt");
+    for (int i = 0; i < dirs.Length; i++)
+    {
+        Console.WriteLine($"{i + 1}. {dirs[i]}");
+    }
+
+    // Предлагаю выбрать уровень
+    ConsoleKeyInfo pressedKey = Console.ReadKey(true);
+    int numLevel = 1;
+    int.TryParse(pressedKey.KeyChar.ToString(), out numLevel);
+    string dirLevel = dirs[numLevel - 1];
+    Console.WriteLine(dirLevel);
+    int levelLengthRow = File.ReadAllLines(dirLevel).Length;
+    int levelLengthColumn = File.ReadAllLines(dirLevel)[0].Length;
+    Console.WriteLine($"Row {levelLengthRow} Columns {levelLengthColumn}");
+
+    // Переношу выбранный уровень в массив
+    char[,] arena = new char[levelLengthRow, levelLengthColumn];
+    string[] level = File.ReadAllLines(dirLevel);
+
+    for (int s = 0; s < level.Length; s++)
+    {
+        char[] row = level[s].ToCharArray();
+        for (int j = 0; j < arena.GetLength(1); j++)
+        {
+            arena[s, j] = row[j];
+        }
+    }
+
+    // Печатаю пользователю выбранный уровень
+    Console.SetCursorPosition(0, 0);
+    for (int i = 0; i < arena.GetLength(0); i++)
+    {
+        for (int j = 0; j < arena.GetLength(1); j++)
+        {
+            Console.Write(arena[i, j]);
+        }
+        Console.WriteLine();
+    }
+    return arena;
 }
