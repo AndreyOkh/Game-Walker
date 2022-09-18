@@ -19,11 +19,11 @@
 // Сохранения
 
 /*
-1. Вывод списка уровней, список уровней находится в папке Levels в формате .txt     // ГОТОВО
-2. Реализовать выбор уровня     // ГОТОВО
-3. Генерация предметов
+1. "ГОТОВО" Вывод списка уровней, список уровней находится в папке Levels в формате .txt
+2. "ГОТОВО" Реализовать выбор уровня
+3. "ГОТОВО" Генерация предметов
 4. Генерация и реализация движения врагов
-5. Реализовать игровой счет
+5. "ГОТОВО" Реализовать игровой счет
 6. Реализовать сохранение
 7. Реализовать игровые жизни
 8. Поздравление с победой или провалом
@@ -36,6 +36,10 @@ using Welcome;
 // Рисуем поле
 Console.Clear();
 char[,] arena = Arena();
+PresentGenerate(arena);
+PrintArena(arena);
+
+int[] progress = new int[1];
 
 // Создаем игрока
 ConsoleKeyInfo pressedKey;
@@ -52,22 +56,23 @@ do
     {
         case (ConsoleKey.UpArrow):
         case (ConsoleKey.DownArrow):
-            positionCoursorTop = Movement(positionCoursorLeft, positionCoursorTop, arena, pressedKey.Key);
+            positionCoursorTop = Movement(positionCoursorLeft, positionCoursorTop, arena, progress, pressedKey.Key);
             break;
 
         case (ConsoleKey.LeftArrow):
         case (ConsoleKey.RightArrow):
-            positionCoursorLeft = Movement(positionCoursorLeft, positionCoursorTop, arena, pressedKey.Key);
+            positionCoursorLeft = Movement(positionCoursorLeft, positionCoursorTop, arena, progress, pressedKey.Key);
             break;
     }
 
 } while (pressedKey.Key != ConsoleKey.Escape);
 
 Console.Clear();
+Console.WriteLine($"Ваш счет {progress[0]}");
 Console.CursorVisible = true;
 
 // Метод перемещения игрока в поле
-int Movement(int positionCoursorLeft, int positionCoursorTop, char[,] arena, ConsoleKey pressedKey)
+int Movement(int positionCoursorLeft, int positionCoursorTop, char[,] arena, int[] progress, ConsoleKey pressedKey)
 {
     int newPositionCoursorLeft = positionCoursorLeft;
     int newPositionCoursorTop = positionCoursorTop;
@@ -92,8 +97,12 @@ int Movement(int positionCoursorLeft, int positionCoursorTop, char[,] arena, Con
     }
 
     bool checkStep = arena[newPositionCoursorTop, newPositionCoursorLeft] == ' ';
-    if (checkStep)
+    bool checkBet = arena[newPositionCoursorTop, newPositionCoursorLeft] == 'º';
+    if (checkStep || checkBet)
     {
+        if (checkBet)
+            progress[0]++;
+
         Console.SetCursorPosition(positionCoursorLeft, positionCoursorTop);
         Console.Write(' ');
         Console.SetCursorPosition(newPositionCoursorLeft, newPositionCoursorTop);
@@ -145,8 +154,12 @@ char[,] Arena()
             arena[s, j] = row[j];
         }
     }
+    return arena;
+}
 
-    // Печатаю пользователю выбранный уровень
+// Печатаю пользователю выбранный уровень
+void PrintArena(char[,] arena)
+{
     Console.SetCursorPosition(0, 0);
     for (int i = 0; i < arena.GetLength(0); i++)
     {
@@ -156,5 +169,25 @@ char[,] Arena()
         }
         Console.WriteLine();
     }
-    return arena;
+}
+
+void PresentGenerate(char[,] arena)
+{
+    Random r = new Random();
+    char bet = 'º';
+    int amountBet = r.Next(10, 100);     //генерируем случайное количество предметов от 10 до 99 штук
+
+    int positionTop;
+    int positionLeft;
+    int i = 0;
+    while (i < amountBet)
+    {
+        positionTop = r.Next(1, 20);
+        positionLeft = r.Next(1, 40);
+        if (arena[positionTop, positionLeft] == ' ')
+        {
+            arena[positionTop, positionLeft] = bet;
+            i++;
+        }
+    }
 }
